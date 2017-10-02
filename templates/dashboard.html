@@ -1,0 +1,26 @@
+{% include "dashboard_header.html" with context %}
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>Dashboard</h1>
+          <small>{{session['selected_subscription']['displayName']}}({{session['selected_subscription']['subscriptionId']}})</small>
+        </section>
+
+        <!-- Main content -->
+        <section class="content container-fluid">
+          <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="info-box">
+                <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Virtual Machine</span>
+                  <span class="info-box-number">{{vm_num}}</span>
+                </div>
+                <!-- /.info-box-content -->
+              </div>
+              <!-- /.info-box -->
+            </div>
+          </div>
+        </section>
+        <!-- /.content -->
+
+{% include "dashboard_footer.html" with context %}
