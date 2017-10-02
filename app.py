@@ -1,16 +1,12 @@
 import sys
-from pprint import pprint
-import base64
 import traceback
+import uuid
 import jwt
-import json
 from flask import Flask, redirect, url_for, session, request, render_template
 from flask_oauthlib.client import OAuth, OAuthException, log
-from flask_sslify import SSLify
 
 # from flask_sslify import SSLify
 
-import uuid
 
 app = Flask(__name__)
 #sslify = SSLify(app)
@@ -23,8 +19,8 @@ logger = getLogger(__name__)
 basicConfig(level=DEBUG)
 
 import configparser
-config = configparser.SafeConfigParser()
-config.read('config')
+CONFIG = configparser.SafeConfigParser()
+CONFIG.read('config')
 
 
 # Put your consumer key and consumer secret into a config file
@@ -48,7 +44,7 @@ config.read('config')
 microsoft = oauth.remote_app(
     'microsoft',
     consumer_key='5ca7d032-9ad5-46e1-9398-65242d4488c5',
-    consumer_secret=config.get('setting', 'CONSUMER_SECRET'),
+    consumer_secret=CONFIG.get('setting', 'CONSUMER_SECRET'),
     base_url='https://management.azure.com/',
     request_token_url=None,
     access_token_method='POST',
@@ -61,7 +57,7 @@ microsoft = oauth.remote_app(
 def index():
     return render_template('hello.html')
 
-@app.route('/login', methods = ['POST', 'GET'])
+@app.route('/login', methods=['POST', 'GET'])
 def login():
 
     if 'microsoft_token' in session:
@@ -73,13 +69,13 @@ def login():
 
     return microsoft.authorize(callback=url_for('authorized', _external=True), state=guid)
 
-@app.route('/logout', methods = ['POST', 'GET'])
+@app.route('/logout', methods=['POST', 'GET'])
 def logout():
     session_clear()
 
-    logger.debug(config.get('setting', 'SITE_URL'))
+    logger.debug(CONFIG.get('setting', 'SITE_URL'))
 #    return redirect('https://login.microsoftonline.com/common/oauth2/logout')
-    return redirect('https://login.microsoftonline.com/common/oauth2/logout?post_logout_redirect_uri=' + str(config.get('setting', 'SITE_URL')))
+    return redirect('https://login.microsoftonline.com/common/oauth2/logout?post_logout_redirect_uri=' + str(CONFIG.get('setting', 'SITE_URL')))
 
 @app.route('/login/authorized')
 def authorized():
@@ -97,7 +93,7 @@ def authorized():
         raise Exception('State has been messed with, end authentication')
 
     # Okay to store this in a local variable, encrypt if it's going to client
-    # machine or database. Treat as a password. 
+    # machine or database. Treat as a password.
     session['microsoft_token'] = (response['access_token'], '')
     access_token = session['microsoft_token'][0]
     session['decoded_access_token'] = jwt.decode(access_token, verify=False)
@@ -123,7 +119,7 @@ def subscriptions(subscription_id=None):
     try:
         #me = microsoft.get('subscriptions?api-version=2014-04-01')
         # サブスクリプションIDがパラメーターにない時はセッションから取得する
-        if subscription_id == None:
+        if subscription_id is None:
             return redirect(url_for('subscriptions', subscription_id=session['selected_subscription']['subscriptionId']))
 
         # パラメーターのサブスクリプションIDを、セッションに保存
@@ -152,7 +148,7 @@ def subscriptions(subscription_id=None):
         lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
         logger.debug(''.join('!! ' + line for line in lines))
         session_clear()
-        return redirect(url_for('index')) 
+        return redirect(url_for('index'))
     else:
         logger.debug(session['decoded_access_token'])
         logger.debug(vm_list)
