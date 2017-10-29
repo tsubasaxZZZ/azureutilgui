@@ -1,0 +1,5 @@
+[setting]
+SITE_URL = http://localhost:10080
+CONSUMER_SECRET = <Azure のアプリケーションのシークレットキー>
+LOGLEVEL = <logger のレベル>
+APPLICATION_INSIGHTS_KEY = <Application Insights のキー>
