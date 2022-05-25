@@ -15,7 +15,7 @@ Jinja2==2.9.6
 MarkupSafe==1.0
 oauthlib==2.0.2
 pycparser==2.18
-PyJWT==1.5.2
+PyJWT==2.4.0
 python-dateutil==2.6.1
 requests==2.18.3
 requests-oauthlib==0.8.0
